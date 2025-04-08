@@ -1,4 +1,16 @@
-# 🪐 Orion
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/16a9c7f8-e645-423a-9a3a-9933ac847b2c" alt="Orion Logo" width="400"/>
+</p>
+
+<div align="center">
+  
+  [Problem](#what-problem-does-orion-solve) • 
+  [Features](#key-features) • 
+  [Usage](#example-usage)
+  
+</div>
+
+---
 
 **Advanced Dependency Analyzer for Ruby Projects**
 
@@ -6,7 +18,7 @@
 
 ---
 
-## 🚨 What Problem Does Orion Solve?
+## What Problem Does Orion Solve?
 
 Ruby development is elegant—until your `Gemfile.lock` turns into a tangled mess of outdated, insecure, or bloated gems. Developers are often left wondering:
 
@@ -19,7 +31,7 @@ Tools like `bundler-audit` and `dependabot` offer partial insights. **Orion** go
 
 ---
 
-## ✅ Key Features
+## Key Features
 
 | Feature                        | Description |
 |-------------------------------|-------------|
@@ -33,7 +45,7 @@ Tools like `bundler-audit` and `dependabot` offer partial insights. **Orion** go
 
 ---
 
-## 💡 Example Usage
+## Example Usage
 
 ```bash
 $ orion analyze (for the entire suite of analysis tools to run)
