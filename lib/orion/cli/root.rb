@@ -1,8 +1,8 @@
-# lib/orion/cli.rb
+# lib/orion/cli/root.rb
 require "thor"
-require_relative "cli/analyze"
+require_relative "analyze"
 
-module Orion 
+module Orion
   module CLI
     class Root < Thor
       desc "analyze SUBCOMMAND ...ARGS", "Analyze code or gem dependencies"
