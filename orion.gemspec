@@ -31,7 +31,6 @@ Gem::Specification.new do |spec|
   end
   spec.bindir = "exe"
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
-  spec.executables << "orion"
   spec.require_paths = ["lib"]
 
   spec.add_dependency "thor", "~> 1.3.2"
