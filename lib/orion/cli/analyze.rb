@@ -3,7 +3,7 @@ require "thor"
 require_relative "../gems/analyzer"
 
 module Orion
-  module CLI 
+  class CLI 
     class Analyze < Thor
       desc "gems", "Analyze gem dependencies"
       option :lockfile, type: :string, default: "Gemfile.lock", aliases: "-l"
