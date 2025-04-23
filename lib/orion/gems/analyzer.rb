@@ -3,27 +3,27 @@
 # lib/orion/gems/analyzer.rb
 
 require "json"
+require "bundler"
 
 module Orion
   module Gems
     # Main entry point for dependency analysis
     class Analyzer
-      def initialize(lockfile:)
+      def initialize(lockfile:, include_dev: false)
         @lockfile = lockfile
+        @include_dev = include_dev
       end
 
       def run
-        {
-          analyzed_file: @lockfile,
-          gems: [
-            { name: "rails", version: "7.1.0", stale: false },
-            { name: "nokogiri", version: "1.13.3", stale: true }
-          ]
-        }
-      end
-
-      def to_s
-        "Analzyed #{@lockfile} - 2 gems found"
+        content = File.read(@lockfile)
+        parser = Bundler::LockfileParser.new(content)
+        parser.specs.map do |spec|
+          {
+            name: spec.name,
+            version: spec.version.to_s,
+            source: spec.source.to_s
+          }
+        end
       end
     end
   end
