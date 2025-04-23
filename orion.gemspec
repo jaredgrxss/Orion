@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
 
   spec.summary = "An advanced code and dependency analzyer for Ruby projects."
   spec.description = "Orion is intended to be used for various parts of your ruby application lifecyle. From dependency analsis, code quality and formatting checks, to visualizing and syncing dependencies across your project. Orion aims to be a versatile solution to most ruby project problems."
-  spec.homepage = "https://github.com/jaredgrxss/orion"
+  spec.homepage = "https://github.com/jaredgrxss"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 3.1.0"
 
@@ -29,8 +29,8 @@ Gem::Specification.new do |spec|
         f.start_with?(*%w[bin/ test/ spec/ features/ .git .github appveyor Gemfile])
     end
   end
-  spec.bindir = "exe"
-  spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
+  spec.bindir = "bin"
+  spec.executables = spec.files.grep(%r{\Abin/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
   spec.add_dependency "thor", "~> 1.3.2"
