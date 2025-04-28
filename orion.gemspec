@@ -36,5 +36,4 @@ Gem::Specification.new do |spec|
   spec.add_dependency "pastel", "~> 0.8"
   spec.add_dependency "thor", "~> 1.3.2"
   spec.add_dependency "tty-table", "~> 0.12"
-  spec.add_dependency "word_wrap", "~> 1.0"
 end

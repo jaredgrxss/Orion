@@ -3,8 +3,6 @@
 # lib/orion/helpers/table_renderer.rb
 
 require "tty-table"
-require "tty-screen"
-require "word_wrap"
 require "pastel"
 
 module Orion
