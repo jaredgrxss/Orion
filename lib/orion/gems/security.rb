@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# lib/orion/gems/security.rb
-
 require "bundler/audit/scanner"
 
 module Orion
