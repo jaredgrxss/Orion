@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# lib/orion/cli/analyze.rb
 require "thor"
 require_relative "../gems/parser"
 require_relative "../helpers/renderer"

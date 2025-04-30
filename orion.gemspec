@@ -10,13 +10,11 @@ Gem::Specification.new do |spec|
 
   spec.summary = "An advanced code and dependency analzyer for Ruby projects."
   spec.description = "Orion is intended to be used for various parts of your ruby application lifecyle. From dependency analsis, code quality and formatting checks, to visualizing and syncing dependencies across your project. Orion aims to be a versatile solution to most ruby project problems."
-  spec.homepage = "https://github.com/jaredgrxss"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 3.1.0"
 
   spec.metadata["allowed_push_host"] = "https://rubygems.org"
 
-  spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = "https://github.com/jaredgrxss/orion"
   spec.metadata["changelog_uri"] = "https://github.com/jaredgrxss/orion/blog/main/CHANGELOG.md"
 
@@ -38,5 +36,4 @@ Gem::Specification.new do |spec|
   spec.add_dependency "pastel", "~> 0.8"
   spec.add_dependency "thor", "~> 1.3.2"
   spec.add_dependency "tty-table", "~> 0.12"
-  spec.add_dependency "word_wrap", "~> 1.0"
 end

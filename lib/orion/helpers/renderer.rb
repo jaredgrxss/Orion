@@ -3,8 +3,6 @@
 # lib/orion/helpers/table_renderer.rb
 
 require "tty-table"
-require "tty-screen"
-require "word_wrap"
 require "pastel"
 
 module Orion
@@ -33,7 +31,7 @@ module Orion
         rows.each do |row|
           puts "\n"
           row.each do |key, value|
-            label = pastel.cyan(key.to_s.split('_').map(&:capitalize).join(' '))
+            label = pastel.cyan(key.to_s.split("_").map(&:capitalize).join(" "))
 
             formatted_value = case value
                               when Array

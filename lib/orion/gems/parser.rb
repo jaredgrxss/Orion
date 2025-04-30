@@ -31,7 +31,6 @@ module Orion
           }
         end
 
-
         [analyzed_gems, vulnerabilities]
       end
     end
