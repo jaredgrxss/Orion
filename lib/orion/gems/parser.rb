@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
-# lib/orion/gems/parser.rb
-
 require "json"
 require "bundler"
+require "fileutils"
 require_relative "security"
 
 module Orion
@@ -32,6 +31,32 @@ module Orion
         end
 
         [analyzed_gems, vulnerabilities]
+      end
+
+      def gems_to_json(gems, vulns, include_vulns: false)
+        data = {
+          gems: gems,
+          total: {
+            gems: gems.size
+          }
+        }
+        if include_vulns
+          data[:vulnerabilities] = vulns
+          data[:total][:vulnerabilities] = vulns.size
+        end
+
+        JSON.pretty_generate(data)
+      end
+
+      def export_gem_report(gems, vulns, include_vulns: false, filename: "orion_gem_report.json")
+        dir = File.join(Dir.pwd, "orion-report")
+        FileUtils.mkdir_p(dir) unless Dir.exist?(dir)
+
+        data = gems_to_json(gems, vulns, include_vulns: include_vulns)
+        path = File.join(dir, filename)
+
+        File.write(path, data)
+        path
       end
     end
   end
