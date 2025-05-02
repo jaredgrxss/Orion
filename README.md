@@ -16,7 +16,7 @@
 
 
   <p align="center">
-      <em>Secure, optimize, and understand your Ruby dependencies—before they become a problem.</em>
+      <em>Secure, optimize, and understand your Ruby project</em>
   </p>
 
 ---
@@ -30,7 +30,7 @@ Ruby development is elegant—until your `Gemfile.lock` turns into a tangled mes
 - How **bloated or inefficient** is our dependency tree?
 - Is there a **better alternative** that boosts performance or reliability?
 
-Tools like `bundler-audit` and `dependabot` offer partial insights. **Orion** goes further. It gives you a complete, actionable picture of your dependencies—so you can build safer, faster Ruby applications.
+Tools like `bundler-audit` and `dependabot` offer partial insights. **Orion** goes further. It gives you a complete, actionable picture of your project—so you can build safer, faster Ruby applications.
 
 ---
 
