@@ -68,4 +68,48 @@ class ParserTest < Minitest::Test
       assert_empty vulnerabilities
     end
   end
+
+  def test_parsing_for_json
+    security_mock = Minitest::Mock.new
+    security_mock.expect :vulnerable_gems_map, { "rails" => true }
+    security_mock.expect :detailed_vulnerabilities, [{ name: "rails", cve: "CVE-1234" }]
+
+    Orion::Gems::Security.stub :new, security_mock do
+      parser = Orion::Gems::Parser.new(lockfile: @tempfile)
+      analyzed_gems, vulnerabilities = parser.run
+
+      assert_equal 2, analyzed_gems.size
+      assert_equal 1, vulnerabilities.size
+
+      json_obj = parser.gems_to_json(analyzed_gems, vulnerabilities, include_vulns: false)
+      parsed = JSON.parse(json_obj)
+
+      assert_equal 2, parsed["gems"].size
+      refute parsed.key?("vulnerabilities")
+      assert_equal 2, parsed["total"]["gems"]
+      refute parsed["total"].key?("vulnerabilities")
+    end
+  end
+
+  def test_parsing_for_json_with_vulns
+    security_mock = Minitest::Mock.new
+    security_mock.expect :vulnerable_gems_map, { "rails" => true }
+    security_mock.expect :detailed_vulnerabilities, [{ name: "rails", cve: "CVE-1234" }]
+
+    Orion::Gems::Security.stub :new, security_mock do
+      parser = Orion::Gems::Parser.new(lockfile: @tempfile)
+      analyzed_gems, vulnerabilities = parser.run
+
+      assert_equal 2, analyzed_gems.size
+      assert_equal 1, vulnerabilities.size
+
+      json_obj = parser.gems_to_json(analyzed_gems, vulnerabilities, include_vulns: true)
+      parsed = JSON.parse(json_obj)
+
+      assert_equal 2, parsed["gems"].size
+      assert_equal 1, parsed["vulnerabilities"].size
+      assert_equal 2, parsed["total"]["gems"]
+      assert_equal 1, parsed["total"]["vulnerabilities"]
+    end
+  end
 end
