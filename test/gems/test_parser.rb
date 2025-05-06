@@ -112,4 +112,50 @@ class ParserTest < Minitest::Test
       assert_equal 1, parsed["total"]["vulnerabilities"]
     end
   end
+
+  def test_parsing_for_csv
+    security_mock = Minitest::Mock.new
+    security_mock.expect :vulnerable_gems_map, {}
+    security_mock.expect :detailed_vulnerabilities, []
+
+    Orion::Gems::Security.stub :new, security_mock do
+      parser = Orion::Gems::Parser.new(lockfile: @tempfile)
+      analyzed_gems, vulnerabilities = parser.run
+
+      csv_output = parser.gems_to_csv(analyzed_gems, vulnerabilities, include_vulns: false)
+
+      assert_includes csv_output, "Gem,Version,Source,Secure"
+      assert_includes csv_output, "rails,6.1.0,locally installed gems,✅"
+      assert_includes csv_output, "rack,2.2.3,locally installed gems,✅"
+      refute_includes csv_output, "CVE"
+    end
+  end
+
+  def test_parsing_for_csv_with_vulns
+    security_mock = Minitest::Mock.new
+    security_mock.expect :vulnerable_gems_map, { "rails" => true }
+    security_mock.expect :detailed_vulnerabilities, [
+      {
+        name: "rails",
+        advisory: "Critical vuln",
+        cve: "CVE-123",
+        url: "https://example.com",
+        patched_versions: [">= 6.1.1"]
+      }
+    ]
+
+    Orion::Gems::Security.stub :new, security_mock do
+      parser = Orion::Gems::Parser.new(lockfile: @tempfile)
+      analyzed_gems, vulnerabilities = parser.run
+
+      csv_output = parser.gems_to_csv(analyzed_gems, vulnerabilities, include_vulns: true)
+
+      assert_includes csv_output, "Gem,Version,Source,Secure,Advisories,CVEs,URLs,Patched Versions"
+      assert_includes csv_output, "rails,6.1.0,locally installed gems,❌"
+      assert_includes csv_output, "Critical vuln"
+      assert_includes csv_output, "CVE-123"
+      assert_includes csv_output, "https://example.com"
+      assert_includes csv_output, ">= 6.1.1"
+    end
+  end
 end
