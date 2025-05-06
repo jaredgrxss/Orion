@@ -33,6 +33,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "bundler", "~> 2.0"
   spec.add_dependency "bundler-audit", "~> 0.9"
+  spec.add_dependency "csv", "~> 3.0"
   spec.add_dependency "pastel", "~> 0.8"
   spec.add_dependency "thor", "~> 1.3.2"
   spec.add_dependency "tty-table", "~> 0.12"

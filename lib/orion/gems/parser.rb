@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "json"
+require "csv"
 require "bundler"
 require "fileutils"
 require_relative "security"
@@ -48,15 +49,52 @@ module Orion
         JSON.pretty_generate(data)
       end
 
-      def export_gem_report(gems, vulns, include_vulns: false, filename: "orion_gem_report.json")
+      def gems_to_csv(gems, vulns, include_vulns: false)
+        CSV.generate(headers: true) do |csv|
+          if include_vulns
+            csv << [
+              "Gem", "Version", "Source", "Secure",
+              "Advisories", "CVEs", "URLs", "Patched Versions"
+            ]
+
+            gems.each do |gem|
+              gem_vulns = vulns.select { |v| v[:name] == gem[:name] }
+              advisories = gem_vulns.map { |v| v[:advisory] }.join(" | ")
+              cves = gem_vulns.map { |v| v[:cve] }.compact.join(" | ")
+              urls = gem_vulns.map { |v| v[:url] }.compact.join(" | ")
+              patched_versions = gem_vulns.flat_map { |v| v[:patched_versions] }.compact.uniq.join(" | ")
+              csv << [
+                gem[:name], gem[:version], gem[:source], gem[:secure],
+                advisories, cves, urls, patched_versions
+              ]
+            end
+          else
+            csv << %w[Gem Version Source Secure]
+            gems.each do |gem|
+              csv << [gem[:name], gem[:version], gem[:source], gem[:secure]]
+            end
+          end
+        end
+      end
+
+      def write_out(dir, filename, data)
+        path = File.join(dir, filename)
+        File.write(path, data)
+        path
+      end
+
+      def export_gem_report(gems, vulns, include_vulns: false, filename: "orion_gem_report", type: "json")
         dir = File.join(Dir.pwd, "orion-report")
         FileUtils.mkdir_p(dir) unless Dir.exist?(dir)
 
-        data = gems_to_json(gems, vulns, include_vulns: include_vulns)
-        path = File.join(dir, filename)
-
-        File.write(path, data)
-        path
+        case type
+        when "json"
+          data = gems_to_json(gems, vulns, include_vulns: include_vulns)
+          write_out(dir, "#{filename}.json", data)
+        when "csv"
+          data = gems_to_csv(gems, vulns, include_vulns: include_vulns)
+          write_out(dir, "#{filename}.csv", data)
+        end
       end
     end
   end
