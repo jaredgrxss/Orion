@@ -5,9 +5,11 @@ require "bundler/audit/scanner"
 module Orion
   module Gems
     class Security
-      def initialize(lockfile:)
+      def initialize(lockfile:, include_dev: false, dev_dependencies: nil)
         @lockfile = lockfile
         @lockfile_dir = Pathname.new(@lockfile).dirname.to_s
+        @include_dev = include_dev
+        @dev_dependencies = dev_dependencies || []
         @scan_results = nil
 
         begin
@@ -27,12 +29,16 @@ module Orion
 
       def vulnerable_gems_map
         scan!.each_with_object({}) do |result, hash|
+          next if skip_dev_gem?(result.gem.name)
+
           hash[result.gem.name] = true
         end
       end
 
       def detailed_vulnerabilities
-        scan!.map do |result|
+        scan!.filter_map do |result|
+          next if skip_dev_gem?(result.gem.name)
+
           {
             name: result.gem.name,
             advisory: result.advisory.title,
@@ -41,6 +47,10 @@ module Orion
             patched_versions: result.advisory.patched_versions.map(&:to_s)
           }
         end
+      end
+
+      def skip_dev_gem?(name)
+        !@include_dev && @dev_dependencies.include?(name)
       end
     end
   end

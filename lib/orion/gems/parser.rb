@@ -17,12 +17,19 @@ module Orion
       def run
         content = File.read(@lockfile)
         parser = Bundler::LockfileParser.new(content)
-        security = Orion::Gems::Security.new(lockfile: @lockfile)
+        security = Orion::Gems::Security.new(lockfile: @lockfile, include_dev: @include_dev)
+
+        dev_dependencies = extract_dev_dependencies
+
 
         vuln_map = security.vulnerable_gems_map
         vulnerabilities = security.detailed_vulnerabilities
 
-        analyzed_gems = parser.specs.map do |spec|
+        analyzed_gems = parser.specs.filter_map do |spec|
+          is_dev = dev_dependencies.include?(spec.name)
+
+          next if is_dev && !@include_dev
+
           {
             name: spec.name,
             version: spec.version.to_s,
@@ -94,6 +101,29 @@ module Orion
         when "csv"
           data = gems_to_csv(gems, vulns, include_vulns: include_vulns)
           write_out(dir, "#{filename}.csv", data)
+        end
+      end
+
+      def extract_dev_dependencies
+        return [] unless @include_dev
+
+        # assumption here is that Gemfile is next to lockfile
+        lockfile_path = Pathname.new(@lockfile).dirname.to_s
+        gemfile_path = File.join(lockfile_path, "Gemfile")
+
+        unless File.exist?(gemfile_path)
+          warn "[orion]: Gemfile not found at #{gemfile_path}. Skipping dev dependency analysis."
+          return []
+        end
+
+        begin
+          definition = Bundler::Definition.build(gemfile_path, @lockfile, nil)
+          definition.dependencies
+                    .select { |dep| dep.groups.include?(:development) }
+                    .map(&:name)
+        rescue => e
+          warn "[orion]: Failed to parse Gemfile for dev dependencies: #{e.class} - #{e.message}"
+          []
         end
       end
     end
