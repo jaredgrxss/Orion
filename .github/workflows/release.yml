@@ -1,0 +1,27 @@
+name: Release Gem
+
+on:
+  workflow_dispatch:
+
+jobs:
+  release:
+    name: Publish to RubyGems
+    runs-on: ubuntu-latest
+    environment: release-approval
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.4.2'
+          bundler-cache: true
+
+      - name: Build gem
+        run: gem build orion.gemspec
+
+      - name: Publish to RubyGems
+        run: gem push orion-*.gem
+        env:
+          RUBYGEMS_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
