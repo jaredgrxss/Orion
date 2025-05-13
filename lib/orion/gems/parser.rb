@@ -17,17 +17,18 @@ module Orion
       def run
         content = File.read(@lockfile)
         parser = Bundler::LockfileParser.new(content)
-        security = Orion::Gems::Security.new(lockfile: @lockfile, include_dev: @include_dev)
-
         dev_dependencies = extract_dev_dependencies
+        security = Orion::Gems::Security.new(
+          lockfile: @lockfile,
+          include_dev: @include_dev,
+          dev_dependencies: dev_dependencies
+        )
 
-
-        vuln_map = security.vulnerable_gems_map
-        vulnerabilities = security.detailed_vulnerabilities
+        vuln_map = security.vulnerable_gems_map || []
+        vulnerabilities = security.detailed_vulnerabilities || []
 
         analyzed_gems = parser.specs.filter_map do |spec|
           is_dev = dev_dependencies.include?(spec.name)
-
           next if is_dev && !@include_dev
 
           {
@@ -105,8 +106,6 @@ module Orion
       end
 
       def extract_dev_dependencies
-        return [] unless @include_dev
-
         # assumption here is that Gemfile is next to lockfile
         lockfile_path = Pathname.new(@lockfile).dirname.to_s
         gemfile_path = File.join(lockfile_path, "Gemfile")
